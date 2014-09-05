@@ -8,25 +8,4 @@
 	        android:layout_width="fill_parent"
 	        android:layout_height="200dp"   
       		 />
-         <RelativeLayout
-	        android:layout_width="fill_parent"
-	        android:layout_height="match_parent"
-	        android:layout_alignParentBottom="true" >
-		        <Button
-		            android:id="@+id/button_confire"
-		            android:layout_width="80dp"
-		            android:layout_height="50dp"
-		            android:layout_marginLeft="5dp" 
-		            android:layout_alignParentLeft="true"
-		            android:text="@string/b_confire" />
-		        <Button
-		            android:id="@+id/button_cancle"
-		            android:layout_width="80dp"
-		            android:layout_height="50dp"
-		            android:layout_marginRight="5dp"
-		            android:layout_alignParentRight="true"
-		            android:text="@string/b_cancle" />
-    	  </RelativeLayout>
-    	  
-         
 </LinearLayout>

@@ -3,7 +3,9 @@ package com.tmall.PhotoMap;
 import java.io.FileNotFoundException;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -12,6 +14,7 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
@@ -93,54 +96,46 @@ public class PhotoMapActivity extends AbstractActivity {
 			Object[] object = svaePicture(data.getExtras());
 			final Bitmap bitmap = (Bitmap) object[1];
 			final String filePath = (String) object[0];
-
-			final Dialog dialog = new Dialog(PhotoMapActivity.this);
-
-			dialog.setContentView(R.layout.custom_dialog);
-			dialog.setTitle(R.string.custom_dialog_titile);
-
-			ImageView image = (ImageView) dialog.findViewById(R.id.image_view);
+			
+			LayoutInflater inflater = LayoutInflater.from(this);
+	        final View imageUploadView = inflater.inflate(  
+	                R.layout.custom_dialog, null); 
+	        ImageView image = (ImageView) imageUploadView.findViewById(R.id.image_view);
 			image.setImageBitmap(bitmap);
+	        final AlertDialog.Builder builder = new AlertDialog.Builder(PhotoMapActivity.this); 
 
-			Button buttonConfire = (Button) dialog.findViewById(R.id.button_confire);
-			Button buttonCancle = (Button) dialog.findViewById(R.id.button_cancle);
+	        builder.setTitle(R.string.custom_dialog_titile);
+	        builder.setView(imageUploadView);
+	        builder.setCancelable(true);
+	        builder.setPositiveButton(R.string.b_confire, 
+	        		new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) {
+							Toast.makeText(PhotoMapActivity.this,
+									"conform clicked", Toast.LENGTH_LONG).show();
+							try {
+								AliYunOss.writeOss(filePath);
+							} catch (Exception e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
 
-			buttonConfire.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					try {
-						Toast.makeText(PhotoMapActivity.this,
-								"confire clicked", Toast.LENGTH_LONG).show();
-						AliYunOss.writeOss(filePath);
-						dialog.dismiss();
-					} catch (FileNotFoundException e) {
-					}
-				}
-			});
-
-			buttonCancle.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					Toast.makeText(PhotoMapActivity.this, "calcle clicked",
-							Toast.LENGTH_LONG).show();
-					dialog.dismiss();
-				}
-			});
-
+						}
+					});
+	        builder.setNegativeButton(R.string.b_cancle, 
+	        		new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) {
+							Toast.makeText(PhotoMapActivity.this, "cancle clicked",
+									Toast.LENGTH_LONG).show();
+						}
+					});
 			// 得到参数
-			WindowManager m = getWindowManager();
-			Display d = m.getDefaultDisplay(); // 获取屏幕宽、高用
-			WindowManager.LayoutParams p = getWindow().getAttributes(); // 获取对话框当前的参数值
-			p.height = (int) (d.getHeight() * 0.6); // 高度设置为屏幕的0.5
-			p.width = (int) (d.getWidth() * 0.9); // 宽度设置为屏幕的0.8
-			dialog.getWindow().setAttributes(p);
-			// 显示
-			dialog.show();
+//			WindowManager m = getWindowManager();
+//			Display d = m.getDefaultDisplay(); // 获取屏幕宽、高用
+//			WindowManager.LayoutParams p = getWindow().getAttributes(); // 获取对话框当前的参数值
+//			p.height = (int) (d.getHeight() * 0.6); // 高度设置为屏幕的0.5
+//			p.width = (int) (d.getWidth() * 0.9); // 宽度设置为屏幕的0.8
 
-			try {
-				AliYunOss.writeOss(filePath);
-			} catch (FileNotFoundException e) {
-			}
+	        builder.show();
 
 		}
 	}
